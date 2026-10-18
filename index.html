@@ -98,6 +98,18 @@
         #ingredientlist {
             width: 100%;
         }
+        #ingredients {
+            display: flex;
+            position: absolute;
+            bottom: 0;
+        }
+        .ingredient {
+            height: 50px;
+        }
+        .ingredientimg {
+            height: 35px;
+            width: 35px;
+        }
     </style>
 </head>
 <body>
@@ -111,21 +123,28 @@
 
     <div id="orderwindow">
         <div id="counter" class="placeholderimg">
-            <button id="espresso">
+            <div id="ingredients">
+            <button id="espresso" class="ingredient">
+                <img class="placeholderimg" class="ingredientimg">
                 espresso
             </button>
-            <button id="milk">
+            <button id="milk" class="ingredient">
+                <img class="placeholderimg" class="ingredientimg">
                 milk
             </button>
-            <button id="sugar">
+            <button id="sugar" class="ingredient">
+                <img class="placeholderimg" class="ingredientimg">
                 sugar
             </button>
-            <button id="syrup">
+            <button id="syrup" class="ingredient">
+                <img class="placeholderimg" class="ingredientimg">
                 syrup
             </button>
-            <button id="ice">
+            <button id="ice" class="ingredient">
+                <img class="placeholderimg" class="ingredientimg">
                 ice
             </button>
+            </div>
         </div>
         <div id="sprite">
             <div id="spriteimg" class="placeholderimg"></div> 
@@ -159,39 +178,107 @@
     let isOrderActive = false;
     let currentOrderPrice = 0.00;
     let dailyorderscompleted = 0;
+    let ingredientnumber = 0
     let ingredientsused = ["","","","",""]
-    const drinklist = [
-        {
-            name: "espresso",
-            price: 2.5,
-            speech: "Hello! could I please have 1 shot of espresso.",
-            ingredients: ["coffee beans", "No milk", "No sugar", "", ""]
-        },
-        {
-            name: "vanilla latte",
-            price: 4.75,
-            speech: "Hey! could I please get a vanilla latte?",
-            ingredients: ["coffee beans", "milk", "No sugar", "syrup", ""]
-        },
-        {
-            name: "iced vanilla latte",
-            price: 4.75,
-            speech: "Hey! could I please get an iced vanilla latte?",
-            ingredients: ["coffee beans", "milk", "No sugar", "syrup", "ice"]
-        },
-        {
-            name: "caramel latte",
-            price: 4.75,
-            speech: "Hello. may I have your finest caramel latte?",
-            ingredients: ["coffee beans", "milk", "No sugar", "syrup", ""]
-        },
-        {
-            name: "iced caramel latte",
-            price: 4.75,
-            speech: "sup, 1 iced caramel latte",
-            ingredients: ["coffee beans", "milk", "No sugar", "syrup", "ice"]
-        }
-    ];
+    const espressobutton = document.getElementById("espresso")
+    const milkbutton = document.getElementById("milk")
+    const sugarbutton = document.getElementById("sugar")
+    const syrupbutton = document.getElementById("syrup")
+    const icebutton = document.getElementById("ice")
+const drinklist = [
+    {
+        name: "espresso",
+        price: 2.50,
+        speech: "Just a standard single shot of espresso, please.",
+        ingredients: ["espresso", "", "", "", ""]
+    },
+    {
+        name: "doppio",
+        price: 3.50,
+        speech: "Make it a double! I need a strong doppio espresso shot.",
+        ingredients: ["espresso", "espresso", "", "", ""]
+    },
+    {
+        name: "espresso macchiato",
+        price: 3.00,
+        speech: "Can I get an espresso macchiato? Just a dash of milk over the top.",
+        ingredients: ["espresso", "milk", "", "", ""]
+    },
+    {
+        name: "cortado",
+        price: 3.75,
+        speech: "Hello. May I have a cortado? Equal parts espresso and milk.",
+        ingredients: ["espresso", "espresso", "milk", "milk", ""]
+    },
+    {
+        name: "flat white",
+        price: 4.25,
+        speech: "Can I get a flat white? Two shots of espresso with smooth milk.",
+        ingredients: ["espresso", "espresso", "milk", "", ""]
+    },
+    {
+        name: "caffe latte",
+        price: 4.50,
+        speech: "Hi! I'd like a classic hot caffe latte, please.",
+        ingredients: ["espresso", "milk", "milk", "milk", ""]
+    },
+    {
+        name: "flavored latte",
+        price: 5.00,
+        speech: "Could I please get a hot milk latte with a shot of syrup?",
+        ingredients: ["espresso", "milk", "milk", "syrup", ""]
+    },
+    {
+        name: "iced latte",
+        price: 4.50,
+        speech: "It's warm today! Can I get a refreshing iced latte?",
+        ingredients: ["espresso", "ice", "milk", "milk", ""]
+    },
+    {
+        name: "iced flavored latte",
+        price: 5.00,
+        speech: "Hey! Can I get a cold iced latte with syrup?",
+        ingredients: ["espresso", "ice", "milk", "syrup", ""]
+    },
+    {
+        name: "espresso romano",
+        price: 3.25,
+        speech: "Let me get an espresso romano. A single shot sweetened with sugar.",
+        ingredients: ["espresso", "sugar", "", "", ""]
+    },
+    {
+        name: "cubano",
+        price: 3.50,
+        speech: "Hola! Can I get a cubano? Double espresso brewed with sugar.",
+        ingredients: ["espresso", "espresso", "sugar", "", ""]
+    },
+    {
+        name: "vietnamese style iced coffee",
+        price: 4.75,
+        speech: "Could I get a sweet iced coffee? Espresso, ice, milk, and sugar.",
+        ingredients: ["espresso", "ice", "milk", "sugar", ""]
+    },
+    {
+        name: "shakerato",
+        price: 4.00,
+        speech: "Can you make me a shakerato? Espresso shaken with ice and syrup.",
+        ingredients: ["espresso", "ice", "syrup", "", ""]
+    },
+    {
+        name: "sweet shakerato",
+        price: 4.25,
+        speech: "I'd love a sweet shakerato! Espresso, ice, syrup, and extra sugar.",
+        ingredients: ["espresso", "ice", "syrup", "sugar", ""]
+    },
+    {
+        name: "the barista overkill",
+        price: 5.50,
+        speech: "Give me the ultimate recipe check. Throw every single ingredient into one iced cup!",
+        ingredients: ["espresso", "milk", "sugar", "syrup", "ice"]
+    }
+];
+
+
 
     const daydisplay = document.getElementById("daydisplay");
     const cashdisplay = document.getElementById("cashdisplay");
@@ -199,7 +286,8 @@
     const ticketdrinkname = document.getElementById("drinkname");
     const servebutton = document.getElementById("servetray");
     const drinkimg = document.getElementById("drinkplaceholder");
-
+    let drinkindex = Math.floor(Math.random() * drinklist.length);
+    let targetdrink = drinklist[drinkindex];
     const drinkingredients = [
         document.getElementById("item1"),
         document.getElementById("item2"),
@@ -209,8 +297,8 @@
     ];
 
     function newcustomer() {
-        const drinkindex = Math.floor(Math.random() * drinklist.length);
-        const targetdrink = drinklist[drinkindex];
+        drinkindex = Math.floor(Math.random() * drinklist.length);
+        targetdrink = drinklist[drinkindex];
 
         currentOrderPrice = targetdrink.price;
         isOrderActive = true;
@@ -227,32 +315,68 @@
         }
     }
 
-    function checkoutcurrentcustomer() {
+function addingredient(name) {
+    if (isOrderActive === false) return;
+    
+    if (ingredientnumber < 5) {
+        ingredientsused[ingredientnumber] = name;
+        ingredientnumber += 1;
+        spritespeech.innerText = "Added " + name + "! Tray slots filled: " + ingredientnumber + "/5";
+    }
+}
+
+function checkRecipe() {
+    const cleanRequired = targetdrink.ingredients.filter(item => item !== "");
+    const cleanUsed = ingredientsused.filter(item => item !== "");
+    if (cleanUsed.length !== cleanRequired.length) {
+        return false;
+    }
+
+    const sortedUsed = [...cleanUsed].sort();
+    const sortedRequired = [...cleanRequired].sort();
+
+    return sortedUsed.every((item, index) => item === sortedRequired[index]);
+}
+
+
+
+function checkoutcurrentcustomer() {
+    if (checkRecipe() === true) {
         gameCash += currentOrderPrice;
         dailyorderscompleted += 1;
-        
         cashdisplay.innerText = "Cash: $" + gameCash.toFixed(2);
-        
         if (dailyorderscompleted === 5) {
             gameDay += 1;
             daydisplay.innerText = "Day " + gameDay;
             dailyorderscompleted = 0;
         }
-        
         isOrderActive = false;
-        spritespeech.innerText = "Thank you! Have an amazing day! Click the tray to welcome the next customer.";
+        spritespeech.innerText = "Thank you! Have an amazing day! Click the tray for the next order.";
         ticketdrinkname.innerText = "No Active Order";
         drinkingredients.forEach(item => item.innerText = "");
-        ingredientsused = ["","","","",""]
+        ingredientsused = ["","","","",""];
+        ingredientnumber = 0;
+    } else {
+        spritespeech.innerText = "Hey, this is wrong! I didn't order this combo. Try assembling it again!";
+        ingredientsused = ["","","","",""];
+        ingredientnumber = 0;
     }
+}
 
-    servebutton.addEventListener("click", function() {
-        if (isOrderActive === false) {
-            newcustomer();
-        } else {
-            checkoutcurrentcustomer();
-        }
-    });
+servebutton.addEventListener("click", function() {
+    if (isOrderActive === false) {
+        newcustomer();
+    } else {
+        checkoutcurrentcustomer();
+    }
+});
+
+espressobutton.addEventListener("click", function() { addingredient("espresso"); });
+milkbutton.addEventListener("click", function() { addingredient("milk"); });
+sugarbutton.addEventListener("click", function() { addingredient("sugar"); });
+syrupbutton.addEventListener("click", function() { addingredient("syrup"); });
+icebutton.addEventListener("click", function() { addingredient("ice"); });
+
     </script>
 </body>
 </html>
