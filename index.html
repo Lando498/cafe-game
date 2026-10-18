@@ -1,26 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <h1 style="position: fixed;">Cafe tycoon</h1>
-    <div id="infobartop">
-        <h2 style="padding-right: 2vw;">Day 0</h2>
-        <h2>Cash: $0</h2>
-    </div>
-    <body>
-        <div id="orderwindow">
-            <div id="sprite">
-                <img id="spriteimg" class="placeholderimg"> 
-                <div id="textbubble">
-                    <p id="spritespeech">YOOOOO</p>
-                </div>
-            </div>
-            <img id="counter" class="placeholderimg">
-            <button id="servetray">
-                <img id="drinkplaceholder" class="placeholderimg">
-            </button>
-        </div>
-    </body>
+    <meta charset="UTF-8">
+    <title>Cafe Tycoon</title>
     <style>
         body {
             margin: 0;
+            font-family: sans-serif;
+            background-color: #2b221c;
+            color: white;
         }
         #infobartop {
             top: 0;
@@ -35,11 +23,15 @@
             top: 20%;
             height: 60%;
             width: 60%;
+            left: 2vw;
         }
         #sprite {
             background-color: red;
-            height: 75%;
+            height: 70%;
             width: 75%;
+            position: absolute;
+            top: 5%;
+            left: 5%;
         }
         #spriteimg {
             width: 45%;
@@ -47,14 +39,204 @@
         }
         #textbubble {
             height: 30%;
-            width: 30%;
+            width: 45%;
             position: absolute;
-            right: 30%;
+            right: 5%;
             top: 20%;
             background-color: greenyellow;
+            color: black;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 8px;
+        }
+        #counter {
+            height: 25%;
+            position: absolute;
+            bottom: 0;
+            background-color: blueviolet;
+            width: 100%;
+        }
+        #servetray {
+            width: 20%;
+            height: 10%;
+            position: absolute;
+            bottom: 10%;
+            left: 15%;
+            z-index: 10;
+            cursor: pointer;
+        }
+        #drinkplaceholder {
+            height: 135%;
+            width: 25%;
+            bottom: 40%;
+            left: 35%;
+            position: relative;
         }
         .placeholderimg {
             background-color: blue;
         }
+        #activetickets {
+            position: absolute;
+            right: 10%;
+            top: 15%;
+            width: 20vw;
+            height: 70vh;
+            background-color: aqua;
+            color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        #drinkimg {
+            height: 120px;
+            width: 90px;
+            position: relative;
+            left: 75px;
+        }
+        #ingredientlist {
+            width: 100%;
+        }
     </style>
 </head>
+<body>
+
+    <h1 style="position: fixed; left: 2vw;">Cafe tycoon</h1>
+    
+    <div id="infobartop">
+        <h2 style="padding-right: 2vw;" id="daydisplay">Day 1</h2>
+        <h2 id="cashdisplay">Cash: $0.00</h2>
+    </div>
+
+    <div id="orderwindow">
+        <div id="counter" class="placeholderimg"></div>
+        <div id="sprite">
+            <div id="spriteimg" class="placeholderimg"></div> 
+            <div id="textbubble">
+                <p id="spritespeech">Welcome to Cafe Tycoon! Click the serve tray to begin.</p>
+            </div>
+        </div>
+        
+        <button id="servetray">
+            <div id="drinkplaceholder" class="placeholderimg"></div>
+        </button>
+    </div>
+
+    <div id="activetickets">
+        <div id="ticket">
+            <h1 id="drinkname">No Active Order</h1>
+            <div id="drinkimg" class="placeholderimg"></div>
+            <ul id="ingredientlist">
+                <li id="item1"></li>
+                <li id="item2"></li>
+                <li id="item3"></li>
+                <li id="item4"></li>
+                <li id="item5"></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+    let gameDay = 1;
+    let gameCash = 0.00;
+    let isOrderActive = false;
+    let currentOrderPrice = 0.00;
+    let dailyorderscompleted = 0;
+    let ingredientsused = ["","","","",""]
+    const drinklist = [
+        {
+            name: "espresso",
+            price: 2.5,
+            speech: "Hello! could I please have 1 shot of espresso.",
+            ingredients: ["coffee beans", "No milk", "No sugar", "", ""]
+        },
+        {
+            name: "vanilla latte",
+            price: 4.75,
+            speech: "Hey! could I please get a vanilla latte?",
+            ingredients: ["coffee beans", "milk", "No sugar", "syrup", ""]
+        },
+        {
+            name: "iced vanilla latte",
+            price: 4.75,
+            speech: "Hey! could I please get an iced vanilla latte?",
+            ingredients: ["coffee beans", "milk", "No sugar", "syrup", "ice"]
+        },
+        {
+            name: "caramel latte",
+            price: 4.75,
+            speech: "Hello. may I have your finest caramel latte?",
+            ingredients: ["coffee beans", "milk", "No sugar", "syrup", ""]
+        },
+        {
+            name: "iced caramel latte",
+            price: 4.75,
+            speech: "sup, 1 iced caramel latte",
+            ingredients: ["coffee beans", "milk", "No sugar", "syrup", "ice"]
+        }
+    ];
+
+    const daydisplay = document.getElementById("daydisplay");
+    const cashdisplay = document.getElementById("cashdisplay");
+    const spritespeech = document.getElementById("spritespeech");
+    const ticketdrinkname = document.getElementById("drinkname");
+    const servebutton = document.getElementById("servetray");
+    const drinkimg = document.getElementById("drinkplaceholder");
+
+    const drinkingredients = [
+        document.getElementById("item1"),
+        document.getElementById("item2"),
+        document.getElementById("item3"),
+        document.getElementById("item4"),
+        document.getElementById("item5")
+    ];
+
+    function newcustomer() {
+        const drinkindex = Math.floor(Math.random() * drinklist.length);
+        const targetdrink = drinklist[drinkindex];
+
+        currentOrderPrice = targetdrink.price;
+        isOrderActive = true;
+
+        spritespeech.innerText = targetdrink.speech;
+        ticketdrinkname.innerText = targetdrink.name;
+
+        for (let i = 0; i < 5; i++) {
+            if (targetdrink.ingredients[i] !== "") {
+                drinkingredients[i].innerText = targetdrink.ingredients[i];
+            } else {
+                drinkingredients[i].innerText = ""; 
+            }
+        }
+    }
+
+    function checkoutcurrentcustomer() {
+        gameCash += currentOrderPrice;
+        dailyorderscompleted += 1;
+        
+        cashdisplay.innerText = "Cash: $" + gameCash.toFixed(2);
+        
+        if (dailyorderscompleted === 5) {
+            gameDay += 1;
+            daydisplay.innerText = "Day " + gameDay;
+            dailyorderscompleted = 0;
+        }
+        
+        isOrderActive = false;
+        spritespeech.innerText = "Thank you! Have an amazing day! Click the tray to welcome the next customer.";
+        ticketdrinkname.innerText = "No Active Order";
+        drinkingredients.forEach(item => item.innerText = "");
+        ingredientsused = ["","","","",""]
+    }
+
+    servebutton.addEventListener("click", function() {
+        if (isOrderActive === false) {
+            newcustomer();
+        } else {
+            checkoutcurrentcustomer();
+        }
+    });
+    </script>
+</body>
+</html>
