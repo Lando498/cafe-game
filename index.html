@@ -1,0 +1,60 @@
+<head>
+    <h1 style="position: fixed;">Cafe tycoon</h1>
+    <div id="infobartop">
+        <h2 style="padding-right: 2vw;">Day 0</h2>
+        <h2>Cash: $0</h2>
+    </div>
+    <body>
+        <div id="orderwindow">
+            <div id="sprite">
+                <img id="spriteimg" class="placeholderimg"> 
+                <div id="textbubble">
+                    <p id="spritespeech">YOOOOO</p>
+                </div>
+            </div>
+            <img id="counter" class="placeholderimg">
+            <button id="servetray">
+                <img id="drinkplaceholder" class="placeholderimg">
+            </button>
+        </div>
+    </body>
+    <style>
+        body {
+            margin: 0;
+        }
+        #infobartop {
+            top: 0;
+            right: 2vw;
+            position: fixed;
+            display: flex;
+            align-items: center;
+        }
+        #orderwindow {
+            background-color: rgb(63, 50, 42);
+            position: fixed;
+            top: 20%;
+            height: 60%;
+            width: 60%;
+        }
+        #sprite {
+            background-color: red;
+            height: 75%;
+            width: 75%;
+        }
+        #spriteimg {
+            width: 45%;
+            height: 100%;
+        }
+        #textbubble {
+            height: 30%;
+            width: 30%;
+            position: absolute;
+            right: 30%;
+            top: 20%;
+            background-color: greenyellow;
+        }
+        .placeholderimg {
+            background-color: blue;
+        }
+    </style>
+</head>
