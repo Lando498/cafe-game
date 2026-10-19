@@ -62,7 +62,7 @@
             width: 20%;
             height: 10%;
             position: absolute;
-            bottom: 10%;
+            bottom: 12%;
             left: 15%;
             z-index: 10;
             cursor: pointer;
@@ -104,11 +104,12 @@
             bottom: 0;
         }
         .ingredient {
-            height: 50px;
+            height: 65px;
         }
         .ingredientimg {
-            height: 35px;
-            width: 35px;
+            height: 50px;
+            width: 50px;
+            background-color: #2b221c;
         }
 
         #espressoskillcheck {
@@ -125,6 +126,7 @@
             transform: translateZ(0); 
         }
     </style>
+    <meta name="version" content="1.0.1"> 
 </head>
 <body>
 
@@ -139,23 +141,23 @@
         <div id="counter" class="placeholderimg">
             <div id="ingredients">
             <button id="espresso" class="ingredient">
-                <img class="placeholderimg" class="ingredientimg">
+                <img id="espressoimg" class="ingredientimg" src="portafilter.png">
                 espresso
             </button>
             <button id="milk" class="ingredient">
-                <img class="placeholderimg" class="ingredientimg">
+                <img id="milkimg" class="ingredientimg" src="milk.png"> 
                 milk
             </button>
             <button id="sugar" class="ingredient">
-                <img class="placeholderimg" class="ingredientimg">
+                <img id="sugarimg" class="ingredientimg" src="sugar.png">
                 sugar
             </button>
             <button id="syrup" class="ingredient">
-                <img class="placeholderimg" class="ingredientimg">
+                <img id="syrupimg" class="ingredientimg" src="syrup.png">
                 syrup
             </button>
             <button id="ice" class="ingredient">
-                <img class="placeholderimg" class="ingredientimg">
+                <img id="iceimg" class="ingredientimg" src="ice.png">
                 ice
             </button>
             </div>
@@ -173,7 +175,8 @@
     </div>
     <div id="espressoskillcheck">
         <img id="espressomachine">
-        <button id="espressostart" style="position: relative; left: 200px;">START</button>
+        <h1 id="espressostatus"></h1>
+        <button id="espressostart" style="position: relative; left: 100px; background-image: url(button.png); background-size: contain; height: 100px; width: 100px; background-color: transparent; border: none;"></button>
         <img id="espressocup" >
         <div id="coffeebar" style="position: absolute; bottom: 0; background-color: rgb(71, 49, 33); width: 100px; height: 10px; transform: translateZ(0); "></div>
     </div>
@@ -419,7 +422,7 @@ async function startespresso() {
     while (currentheight < 110) {
         if (isbrewing === true) {
             currentheight += 5;
-            
+            console.log(currentheight)
             if (currentheight > 100) {
                 document.getElementById("espressocup").src = "coffeecupspill.png";
                 document.getElementById("coffeebar").style.height = `100px`; 
@@ -432,7 +435,7 @@ async function startespresso() {
             break; 
         }
     }
-    if (currentheight === 100) {
+    if (currentheight >= 80 && currentheight < 90) {
         addingredient("espresso");
         console.log("Perfect pour!");
         document.getElementById("espressocup").src = "coffeecupspill.png";
