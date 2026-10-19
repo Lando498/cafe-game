@@ -113,6 +113,16 @@
 
         #espressoskillcheck {
             display: none;
+            position: absolute;
+            bottom:  20px;
+        }
+        #espressocup {
+            height: 100px;
+            width: 100px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 0px;
+            transform: translateZ(0); 
         }
     </style>
 </head>
@@ -163,9 +173,9 @@
     </div>
     <div id="espressoskillcheck">
         <img id="espressomachine">
-        <button id="espressostart">START</button>
-        <img id="espressocup">
-        <div id="coffeebar" style="position: absolute; background-color: rgb(71, 49, 33); width: 100; height: 10;"></div>
+        <button id="espressostart" style="position: relative; left: 200px;">START</button>
+        <img id="espressocup" >
+        <div id="coffeebar" style="position: absolute; bottom: 0; background-color: rgb(71, 49, 33); width: 100px; height: 10px; transform: translateZ(0); "></div>
     </div>
     <div id="activetickets">
         <div id="ticket">
@@ -329,13 +339,9 @@ function addingredient(name) {
     if (isOrderActive === false) return;
     
     if (ingredientnumber < 5) {
-            if (name === "espresso") {
-        document.getElementById("espressoskillcheck").style.display = "flex"
-    } else {
         ingredientsused[ingredientnumber] = name;
         ingredientnumber += 1;
         spritespeech.innerText = "Added " + name + "! Tray slots filled: " + ingredientnumber + "/5";
-    }
     }
 }
 
@@ -401,16 +407,47 @@ function checkoutcurrentcustomer() {
         
     }
 }
+let isbrewing = false
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+async function startespresso() {
+    if (startespresso.isRunning) return;
+    startespresso.isRunning = true;
+    
+    document.getElementById("coffeebar").style.height = "10px";
+    let currentheight = 10;
 
-function startespresso(state) {
-    while (state === true) {
-        setInterval(() => {
-        document.getElementById("coffeebar").style.height += 1
-        document.getElementById("coffeebar").style.bottom += 1
-        }, 1000);
+    while (currentheight < 110) {
+        if (isbrewing === true) {
+            currentheight += 5;
+            
+            if (currentheight > 100) {
+                document.getElementById("espressocup").src = "coffeecupspill.png";
+                document.getElementById("coffeebar").style.height = `100px`; 
+            } else {
+                document.getElementById("coffeebar").style.height = `${currentheight}px`; 
+            }
+            
+            await sleep(100);
+        } else {
+            break; 
+        }
     }
-}
+    if (currentheight === 100) {
+        addingredient("espresso");
+        console.log("Perfect pour!");
+        document.getElementById("espressocup").src = "coffeecupspill.png";
+        document.getElementById("espressoskillcheck").style.display = "None"
+        document.getElementById("coffeebar").style.height = "10px";
+    } else {
+        console.log("Pour failed. Espresso cancelled.");
+        await sleep(600); 
+        document.getElementById("espressocup").src = "coffeecupspill.png";
+        document.getElementById("espressoskillcheck").style.display = "None"
+        document.getElementById("coffeebar").style.height = "10px";
+    }
 
+    startespresso.isRunning = false;
+}
 servebutton.addEventListener("click", function() {
     if (isOrderActive === false) {
         newcustomer();
@@ -419,13 +456,21 @@ servebutton.addEventListener("click", function() {
     }
 });
 
-espressobutton.addEventListener("click", function() { addingredient("espresso"); });
+espressobutton.addEventListener("click", function() {
+        document.getElementById("espressoskillcheck").style.display = "flex"
+        document.getElementById("espressocup").src = "coffeecup.png";
+});
 milkbutton.addEventListener("click", function() { addingredient("milk"); });
 sugarbutton.addEventListener("click", function() { addingredient("sugar"); });
 syrupbutton.addEventListener("click", function() { addingredient("syrup"); });
 icebutton.addEventListener("click", function() { addingredient("ice"); });
-document.getElementById("espressostart").addEventListener("mousedown", function() { startespresso(true)})
-document.getElementById("espressostart").addEventListener("mouseup", function() { startespresso(false)})
+document.getElementById("espressostart").addEventListener("mousedown", function() {
+isbrewing = true
+startespresso()
+})
+document.getElementById("espressostart").addEventListener("mouseup", function() { 
+isbrewing = false
+})
     </script>
 </body>
 </html>
