@@ -24,6 +24,7 @@
             height: 60%;
             width: 60%;
             left: 2vw;
+            border-radius: 15px;
         }
         #sprite {
             background-color: red;
@@ -43,7 +44,7 @@
             position: absolute;
             right: 5%;
             top: 20%;
-            background-color: greenyellow;
+            background-color: rgb(226, 183, 159);
             color: black;
             padding: 10px;
             box-sizing: border-box;
@@ -53,7 +54,8 @@
             height: 25%;
             position: absolute;
             bottom: 0;
-            background-color: blueviolet;
+            background-image: url(image.png);
+            background-size: cover;
             width: 100%;
         }
         #servetray {
@@ -72,16 +74,14 @@
             left: 35%;
             position: relative;
         }
-        .placeholderimg {
-            background-color: blue;
-        }
         #activetickets {
             position: absolute;
             right: 10%;
             top: 15%;
             width: 20vw;
             height: 70vh;
-            background-color: aqua;
+            background-image: url(ticket.png);
+            background-size: contain;
             color: black;
             display: flex;
             flex-direction: column;
@@ -109,6 +109,10 @@
         .ingredientimg {
             height: 35px;
             width: 35px;
+        }
+
+        #espressoskillcheck {
+            display: none;
         }
     </style>
 </head>
@@ -157,11 +161,16 @@
             <div id="drinkplaceholder" class="placeholderimg"></div>
         </button>
     </div>
-
+    <div id="espressoskillcheck">
+        <img id="espressomachine">
+        <button id="espressostart">START</button>
+        <img id="espressocup">
+        <div id="coffeebar" style="position: absolute; background-color: rgb(71, 49, 33); width: 100; height: 10;"></div>
+    </div>
     <div id="activetickets">
         <div id="ticket">
             <h1 id="drinkname">No Active Order</h1>
-            <div id="drinkimg" class="placeholderimg"></div>
+            <img id="drinkimg">
             <ul id="ingredientlist">
                 <li id="item1"></li>
                 <li id="item2"></li>
@@ -223,7 +232,7 @@ const drinklist = [
         ingredients: ["espresso", "milk", "milk", "milk", ""]
     },
     {
-        name: "flavored latte",
+        name: "flavoured latte",
         price: 5.00,
         speech: "Could I please get a hot milk latte with a shot of syrup?",
         ingredients: ["espresso", "milk", "milk", "syrup", ""]
@@ -235,7 +244,7 @@ const drinklist = [
         ingredients: ["espresso", "ice", "milk", "milk", ""]
     },
     {
-        name: "iced flavored latte",
+        name: "iced flavoured latte",
         price: 5.00,
         speech: "Hey! Can I get a cold iced latte with syrup?",
         ingredients: ["espresso", "ice", "milk", "syrup", ""]
@@ -284,8 +293,10 @@ const drinklist = [
     const cashdisplay = document.getElementById("cashdisplay");
     const spritespeech = document.getElementById("spritespeech");
     const ticketdrinkname = document.getElementById("drinkname");
+    const ticketdrinkimg = document.getElementById("drinkimg")
     const servebutton = document.getElementById("servetray");
-    const drinkimg = document.getElementById("drinkplaceholder");
+    const drinkimg = document.querySelector(".drinkimg")
+    const icedlatteimg = "iced latte.png"
     let drinkindex = Math.floor(Math.random() * drinklist.length);
     let targetdrink = drinklist[drinkindex];
     const drinkingredients = [
@@ -299,13 +310,12 @@ const drinklist = [
     function newcustomer() {
         drinkindex = Math.floor(Math.random() * drinklist.length);
         targetdrink = drinklist[drinkindex];
-
+        ticketdrinkimg.src = `${targetdrink.name}.png`;
         currentOrderPrice = targetdrink.price;
         isOrderActive = true;
 
         spritespeech.innerText = targetdrink.speech;
         ticketdrinkname.innerText = targetdrink.name;
-
         for (let i = 0; i < 5; i++) {
             if (targetdrink.ingredients[i] !== "") {
                 drinkingredients[i].innerText = targetdrink.ingredients[i];
@@ -319,9 +329,13 @@ function addingredient(name) {
     if (isOrderActive === false) return;
     
     if (ingredientnumber < 5) {
+            if (name === "espresso") {
+        document.getElementById("espressoskillcheck").style.display = "flex"
+    } else {
         ingredientsused[ingredientnumber] = name;
         ingredientnumber += 1;
         spritespeech.innerText = "Added " + name + "! Tray slots filled: " + ingredientnumber + "/5";
+    }
     }
 }
 
@@ -338,11 +352,20 @@ function checkRecipe() {
     return sortedUsed.every((item, index) => item === sortedRequired[index]);
 }
 
-
-
+let tipchance = 0
+let tipamount = 0
 function checkoutcurrentcustomer() {
+    tipchance = Math.random(1,3)
+    tipamount = Math.random(1,10)
     if (checkRecipe() === true) {
-        gameCash += currentOrderPrice;
+        if (Math.round(tipchance) === 1) {
+            if (Math.round(tipamount) > 0) {
+            gameCash += Math.round(tipamount)
+            spritespeech.innerText = "Hey! this is completely wrong!";
+            }
+        }
+        
+        gameCash += currentOrderPrice
         dailyorderscompleted += 1;
         cashdisplay.innerText = "Cash: $" + gameCash.toFixed(2);
         if (dailyorderscompleted === 5) {
@@ -353,13 +376,38 @@ function checkoutcurrentcustomer() {
         isOrderActive = false;
         spritespeech.innerText = "Thank you! Have an amazing day! Click the tray for the next order.";
         ticketdrinkname.innerText = "No Active Order";
+        ticketdrinkimg.src = null;
         drinkingredients.forEach(item => item.innerText = "");
         ingredientsused = ["","","","",""];
         ingredientnumber = 0;
+    
     } else {
-        spritespeech.innerText = "Hey, this is wrong! I didn't order this combo. Try assembling it again!";
+        if (Math.round(tipchance) === 1) {
+            if (gameCash > Math.round(tipamount)) {
+                if (Math.round(tipamount) > 0) {
+                gameCash -= Math.round(tipamount)
+                spritespeech.innerText = "Hey! this is completely wrong!" + " customer stole $" + Math.round(tipamount) + " from the tip jar"; 
+                }
+            }
+        } else {
+            spritespeech.innerText = "Hey! this is completely wrong!";
+        }
+        cashdisplay.innerText = gameCash
         ingredientsused = ["","","","",""];
         ingredientnumber = 0;
+        isOrderActive = false;
+        ticketdrinkname.innerText = "No Active Order";
+        drinkingredients.forEach(item => item.innerText = "");
+        
+    }
+}
+
+function startespresso(state) {
+    while (state === true) {
+        setInterval(() => {
+        document.getElementById("coffeebar").style.height += 1
+        document.getElementById("coffeebar").style.bottom += 1
+        }, 1000);
     }
 }
 
@@ -376,7 +424,8 @@ milkbutton.addEventListener("click", function() { addingredient("milk"); });
 sugarbutton.addEventListener("click", function() { addingredient("sugar"); });
 syrupbutton.addEventListener("click", function() { addingredient("syrup"); });
 icebutton.addEventListener("click", function() { addingredient("ice"); });
-
+document.getElementById("espressostart").addEventListener("mousedown", function() { startespresso(true)})
+document.getElementById("espressostart").addEventListener("mouseup", function() { startespresso(false)})
     </script>
 </body>
 </html>
