@@ -126,7 +126,7 @@
             transform: translateZ(0); 
         }
     </style>
-    <meta name="version" content="1.0.1"> 
+    <meta name="version" content="1.0.3"> 
 </head>
 <body>
 
@@ -408,7 +408,7 @@ function checkoutcurrentcustomer() {
         } else {
             spritespeech.innerText = "Hey! this is completely wrong!";
         }
-        cashdisplay.innerText = gameCash
+        cashdisplay.innerText = "Cash: $" + gameCash.toFixed(2);
         ingredientsused = ["","","","",""];
         ingredientnumber = 0;
         isOrderActive = false;
