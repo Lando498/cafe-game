@@ -27,7 +27,7 @@
             border-radius: 15px;
         }
         #sprite {
-            background-color: red;
+            background-color: rgb(216, 198, 174);
             height: 70%;
             width: 75%;
             position: absolute;
@@ -162,8 +162,8 @@
             </button>
             </div>
         </div>
-        <div id="sprite">
-            <div id="spriteimg" class="placeholderimg"></div> 
+        <div id="sprite" style="background-image: url(background.png); background-size: contain;">
+            <img id="spriteimg">
             <div id="textbubble">
                 <p id="spritespeech">Welcome to Cafe Tycoon! Click the serve tray to begin.</p>
             </div>
@@ -193,7 +193,9 @@
             </ul>
         </div>
     </div>
-
+<footer>
+    <h5 style="position: absolute; bottom: 5px; right: 20px;">CREDITS: customer drawings were made by ascpixi, this project was made by me Barista498 for Hack Club crescent</h5>
+</footer>
     <script>
     let gameDay = 1;
     let gameCash = 0.00;
@@ -301,9 +303,11 @@ const drinklist = [
 ];
 
 
-
+    const customer = "customerwait.png"
+    const customerrecieve = "customerget.png"
     const daydisplay = document.getElementById("daydisplay");
     const cashdisplay = document.getElementById("cashdisplay");
+    const sprite = document.getElementById("spriteimg")
     const spritespeech = document.getElementById("spritespeech");
     const ticketdrinkname = document.getElementById("drinkname");
     const ticketdrinkimg = document.getElementById("drinkimg")
@@ -321,9 +325,11 @@ const drinklist = [
     ];
 
     function newcustomer() {
+        sprite.src = 'customerwait.png';
         drinkindex = Math.floor(Math.random() * drinklist.length);
         targetdrink = drinklist[drinkindex];
         ticketdrinkimg.src = `${targetdrink.name}.png`;
+        document.getElementById("drinkplaceholder").src = `${targetdrink.name}.png`;
         currentOrderPrice = targetdrink.price;
         isOrderActive = true;
 
@@ -383,6 +389,7 @@ function checkoutcurrentcustomer() {
             dailyorderscompleted = 0;
         }
         isOrderActive = false;
+        sprite.src = 'customerget.png';
         spritespeech.innerText = "Thank you! Have an amazing day! Click the tray for the next order.";
         ticketdrinkname.innerText = "No Active Order";
         ticketdrinkimg.src = null;
