@@ -60,12 +60,13 @@
         }
         #servetray {
             width: 20%;
-            height: 10%;
+            height: 30%;
             position: absolute;
-            bottom: 13%;
-            left: 15%;
+            bottom: -10px;
+            left: 45%;
             z-index: 10;
             cursor: pointer;
+            margin-top: 20px;
         }
         #drinkplaceholder {
             height: 135%;
@@ -107,6 +108,11 @@
             height: 75px;
             display: flex;
             flex-direction: column;
+            background-color: rgb(63, 50, 42);
+            color: white;
+            position: relative;
+            bottom: 20px;
+            left: 10px;
         }
         .ingredientimg {
             height: 50px;
@@ -171,9 +177,9 @@
             </div>
         </div>
         
-        <button id="servetray">
+        <input type="image" src="tray.png" id="servetray">
             <div id="drinkplaceholder" class="placeholderimg"></div>
-        </button>
+        </input>
     </div>
     <div id="espressoskillcheck">
         <img id="espressomachine">
@@ -199,18 +205,27 @@
     <h5 style="position: absolute; bottom: 5px; right: 20px;">CREDITS: customer drawings were made by ascpixi, this project was made by me Barista498 for Hack Club crescent</h5>
 </footer>
     <script>
-    let gameDay = 1;
-    let gameCash = 0.00;
+    let gameDay = localStorage.getItem("gameDay") ? parseInt(localStorage.getItem("gameDay")) : 1;
+    let gameCash = localStorage.getItem("gameCash") ? parseFloat(localStorage.getItem("gameCash")) : 0.00;
+
     let isOrderActive = false;
     let currentOrderPrice = 0.00;
     let dailyorderscompleted = 0;
     let ingredientnumber = 0
     let ingredientsused = ["","","","",""]
+    const serveddrink = document.getElementById("drinkplaceholder")
     const espressobutton = document.getElementById("espresso")
     const milkbutton = document.getElementById("milk")
     const sugarbutton = document.getElementById("sugar")
     const syrupbutton = document.getElementById("syrup")
     const icebutton = document.getElementById("ice")
+    document.getElementById("daydisplay").innerText = "Day " + gameDay;
+    document.getElementById("cashdisplay").innerText = "Cash: $" + gameCash.toFixed(2);
+
+    function saveGameProgress() {
+        localStorage.setItem("gameDay", gameDay);
+        localStorage.setItem("gameCash", gameCash);
+    }
 const drinklist = [
     {
         name: "espresso",
@@ -326,6 +341,10 @@ const drinklist = [
         document.getElementById("item5")
     ];
 
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
     function newcustomer() {
         sprite.src = 'customerwait.png';
         drinkindex = Math.floor(Math.random() * drinklist.length);
@@ -372,22 +391,23 @@ function checkRecipe() {
 let tipchance = 0
 let tipamount = 0
 function checkoutcurrentcustomer() {
-    tipchance = Math.random(1,3)
-    tipamount = Math.random(1,10)
+    serveddrink.src = `${targetdrink.name}.png`;
+    tipchance = getRandomInt(2)
+    tipamount = getRandomInt(10)
     if (checkRecipe() === true) {
         if (Math.round(tipchance) === 1) {
             if (Math.round(tipamount) > 0) {
             gameCash += Math.round(tipamount)
-            spritespeech.innerText = "Hey! this is completely wrong!";
             }
         }
         
         gameCash += currentOrderPrice
+        localStorage.setItem("cash", gameCash);
         dailyorderscompleted += 1;
-        cashdisplay.innerText = "Cash: $" + gameCash.toFixed(2);
+        document.getElementById("cashdisplay").innerText = "Cash: $" + gameCash.toFixed(2)
         if (dailyorderscompleted === 5) {
             gameDay += 1;
-            daydisplay.innerText = "Day " + gameDay;
+            document.getElementById("daydisplay").innerText = "Day " + gameDay;
             dailyorderscompleted = 0;
         }
         isOrderActive = false;
@@ -410,14 +430,17 @@ function checkoutcurrentcustomer() {
         } else {
             spritespeech.innerText = "Hey! this is completely wrong!";
         }
-        cashdisplay.innerText = "Cash: $" + gameCash.toFixed(2);
+        document.getElementById("cashdisplay").innerText = "Cash: $" + gameCash.toFixed(2)
+        localStorage.setItem("cash", gameCash);
         ingredientsused = ["","","","",""];
         ingredientnumber = 0;
         isOrderActive = false;
         ticketdrinkname.innerText = "No Active Order";
         drinkingredients.forEach(item => item.innerText = "");
-        
     }
+    saveGameProgress();
+    document.getElementById("cashdisplay").innerText = "Cash: $" + gameCash.toFixed(2);
+    document.getElementById("daydisplay").innerText = "Day " + gameDay;
 }
 let isbrewing = false
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -444,16 +467,17 @@ async function startespresso() {
             break; 
         }
     }
-    if (currentheight >= 80 && currentheight < 90) {
+    if (currentheight >= 75 && currentheight < 90) {
         addingredient("espresso");
         console.log("Perfect pour!");
         document.getElementById("espressocup").src = "coffeecupspill.png";
         document.getElementById("espressoskillcheck").style.display = "None"
         document.getElementById("coffeebar").style.height = "10px";
     } else {
-        console.log("Pour failed. Espresso cancelled.");
-        await sleep(600); 
+        spritespeech.innerText = "Espresso check failed, try again"
         document.getElementById("espressocup").src = "coffeecupspill.png";
+        await sleep(1000); 
+        spritespeech.innerText = targetdrink.speech;
         document.getElementById("espressoskillcheck").style.display = "None"
         document.getElementById("coffeebar").style.height = "10px";
     }
@@ -484,5 +508,7 @@ document.getElementById("espressostart").addEventListener("mouseup", function() 
 isbrewing = false
 })
     </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"bc411c29ef3b41f2b21b6dcf78a42029","r":1,"spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"bc411c29ef3b41f2b21b6dcf78a42029","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
