@@ -380,7 +380,6 @@ function checkRecipe() {
 let tipchance = 0
 let tipamount = 0
 function checkoutcurrentcustomer() {
-    serveddrink.src = `${targetdrink.name}.png`;
     tipchance = getRandomInt(2)
     tipamount = getRandomInt(10)
     if (checkRecipe() === true) {
