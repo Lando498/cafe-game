@@ -68,13 +68,6 @@
             cursor: pointer;
             margin-top: 20px;
         }
-        #drinkplaceholder {
-            height: 135%;
-            width: 25%;
-            bottom: 40%;
-            left: 35%;
-            position: relative;
-        }
         #activetickets {
             position: absolute;
             right: 10%;
@@ -177,9 +170,7 @@
             </div>
         </div>
         
-        <input type="image" src="tray.png" id="servetray">
-            <div id="drinkplaceholder" class="placeholderimg"></div>
-        </input>
+        <input type="image" src="tray.png" id="servetray"></input>
     </div>
     <div id="espressoskillcheck">
         <img id="espressomachine">
@@ -213,7 +204,6 @@
     let dailyorderscompleted = 0;
     let ingredientnumber = 0
     let ingredientsused = ["","","","",""]
-    const serveddrink = document.getElementById("drinkplaceholder")
     const espressobutton = document.getElementById("espresso")
     const milkbutton = document.getElementById("milk")
     const sugarbutton = document.getElementById("sugar")
@@ -350,7 +340,6 @@ const drinklist = [
         drinkindex = Math.floor(Math.random() * drinklist.length);
         targetdrink = drinklist[drinkindex];
         ticketdrinkimg.src = `${targetdrink.name}.png`;
-        document.getElementById("drinkplaceholder").src = `${targetdrink.name}.png`;
         currentOrderPrice = targetdrink.price;
         isOrderActive = true;
 
