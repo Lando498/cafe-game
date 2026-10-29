@@ -1,4 +1,8 @@
+<h1>Cafe-game!</h1>
+
 I made a game as my first javascript project that has actually helped me understand the language  
+
+<img width="1713" height="959" alt="image" src="https://github.com/user-attachments/assets/b1c67582-8ec7-4495-b5c0-cbdd45d2ab6c" />  
 
 in this game you are a barista in a cafe which now has artwork!
 
@@ -7,4 +11,5 @@ if you cant tell by most things i love coffee so this project is kind of a no br
 now for the shame  
 i used gemini for planning out this project, i didnt just copy its code but it kind of outlined what i should do to make the systems work
 
-credits: me and i used drawings made by ascpixi for crescent as customer sprites but the rest was drawn and made by me
+credits: me and i used drawings made by ascpixi for crescent as customer sprites but the rest was drawn and made by me  
+update 1.1: Local storage! this is a new concept to me and took some tinkering but hopefully it works for other people and not just me
